@@ -1,7 +1,6 @@
 package net.buxville.rahman.buxinvest.commands;
 
-import net.buxville.rahman.buxinvest.SQL.SQLchecks;
-import net.buxville.rahman.buxinvest.SQL.SQLvaluechange;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -23,7 +22,7 @@ public class SetChanges {
 		}
 
 		String index = args[1].toUpperCase();
-		if (!SQLchecks.stockhistoryContainsIndex(index)) {
+		if (!Database.stockhistoryContainsIndex(index)) {
 			p.sendMessage(ChatColor.RED + "This company doesn't have a value");
 			return;
 		}
@@ -45,14 +44,14 @@ public class SetChanges {
 			return;
 		}
 
-		if (SQLchecks.stockchangesContainsIndex(index)) {
-			SQLvaluechange.updateChange(index, Lower, Upper);
+		if (Database.stockchangesContainsIndex(index)) {
+			Database.updateChange(index, Lower, Upper);
 			p.sendMessage(ChatColor.GREEN + "Company \"" + index
 					+ "\" changes set to: -" + Lower + " and " + Upper
 					+ " percent.");
 			return;
 		} else {
-			SQLvaluechange.addChange(index, Lower, Upper);
+			Database.addChange(index, Lower, Upper);
 			p.sendMessage(ChatColor.GREEN + "Company \"" + index
 					+ "\" changes added as: -" + Lower + " and " + Upper
 					+ " percent.");

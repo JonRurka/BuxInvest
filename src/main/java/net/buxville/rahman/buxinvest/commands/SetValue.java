@@ -1,8 +1,7 @@
 package net.buxville.rahman.buxinvest.commands;
 
 import net.buxville.rahman.buxinvest.BuxInvest;
-import net.buxville.rahman.buxinvest.SQL.SQLchecks;
-import net.buxville.rahman.buxinvest.SQL.SQLvaluechange;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,7 +24,7 @@ public class SetValue {
 		}
 
 		String index = args[1].toUpperCase();
-		if (!SQLchecks.stockContainsIndex(index)) {
+		if (!Database.stockContainsIndex(index)) {
 			p.sendMessage(ChatColor.RED + "Company with index \"" + index
 					+ "\" does not exist.");
 			return;
@@ -47,7 +46,7 @@ public class SetValue {
 			return;
 		}
 
-		if (SQLchecks.stockhistoryContainsIndex(index)) {
+		if (Database.stockhistoryContainsIndex(index)) {
 			p.sendMessage(ChatColor.RED
 					+ "This operation has already been completed.");
 			p.sendMessage(ChatColor.RED
@@ -56,7 +55,7 @@ public class SetValue {
 					+ "To update amount of stocks do /invest updateamount [index] [amount].");
 			return;
 		} else {
-			SQLvaluechange.addEntry(index, value, amount);
+			Database.addEntry(index, value, amount);
 			p.sendMessage(ChatColor.GREEN + "Company \"" + index
 					+ "\" value set at " + value + "Bux.");
 			p.sendMessage(ChatColor.GOLD
@@ -84,7 +83,7 @@ public class SetValue {
 			p.sendMessage(ChatColor.RED + "Error with your company value!");
 			return;
 		}
-		SQLvaluechange.updateAmount(index, amount);
+		Database.updateAmount(index, amount);
 		p.sendMessage(ChatColor.GREEN + "Company \"" + index
 				+ "\" value updated to " + amount + " amount of stocks.");
 	}
@@ -109,7 +108,7 @@ public class SetValue {
 			p.sendMessage(ChatColor.RED + "Error with your company value!");
 			return;
 		}
-		SQLvaluechange.updateEntry(index, value);
+		Database.updateEntry(index, value);
 		p.sendMessage(ChatColor.GREEN + "Company \"" + index
 				+ "\" value updated to " + value + "Bux.");
 	}
@@ -128,13 +127,13 @@ public class SetValue {
 		}
 
 		String index = args[1].toUpperCase();
-		if (!SQLchecks.stockchangesContainsIndex(index)) {
+		if (!Database.stockchangesContainsIndex(index)) {
 			p.sendMessage(ChatColor.RED + "The company with index \"" + index
 					+ "\" does not exist.");
 			return;
 		}
 
-		int value = SQLvaluechange.getValue(index);
+		int value = Database.getStockValue(index);
 		p.sendMessage(ChatColor.GREEN + "Price of stock with " + "index \""
 				+ index + "\" is " + value + BuxInvest.getEconomy().currencyNamePlural()+ ".");
 		return;

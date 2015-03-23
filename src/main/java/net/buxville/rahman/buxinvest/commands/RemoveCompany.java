@@ -1,7 +1,6 @@
 package net.buxville.rahman.buxinvest.commands;
 
-import net.buxville.rahman.buxinvest.SQL.SQLchecks;
-import net.buxville.rahman.buxinvest.SQL.SQLaddrem;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -23,16 +22,19 @@ public class RemoveCompany {
 
 		// Remove company from data base
 		String index = args[1].toUpperCase();
-		if (SQLchecks.stockchangesContainsIndex(index)) {
-			SQLaddrem.removeChanges(index);
+		
+		Database.removePlayerStocks(index);
+		
+		if (Database.stockchangesContainsIndex(index)) {
+			Database.removeChanges(index);
 		}
 
-		if (SQLchecks.stockhistoryContainsIndex(index)) {
-			SQLaddrem.removeHistory(index);
+		if (Database.stockhistoryContainsIndex(index)) {
+			Database.removeHistory(index);
 		}
 
-		if (SQLchecks.stockContainsIndex(index)) {
-			SQLaddrem.removeStock(index);
+		if (Database.stockContainsIndex(index)) {
+			Database.removeStock(index);
 			p.sendMessage(ChatColor.GREEN + "Company removed from Database.");
 		}
 	}

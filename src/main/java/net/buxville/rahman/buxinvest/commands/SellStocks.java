@@ -1,9 +1,7 @@
 package net.buxville.rahman.buxinvest.commands;
 
 import net.buxville.rahman.buxinvest.BuxInvest;
-import net.buxville.rahman.buxinvest.SQL.SQLchecks;
-import net.buxville.rahman.buxinvest.SQL.SQLsell;
-import net.buxville.rahman.buxinvest.SQL.SQLvaluechange;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,7 +24,7 @@ public class SellStocks {
 		// Retrieve data from command
 		String index = args[1].toUpperCase();
 
-		if (!SQLchecks.playerstocksContains(index, p)) {
+		if (!Database.playerstocksContains(index, p)) {
 			p.sendMessage(ChatColor.RED + "You do not own any of \"" + index
 					+ "\" stocks.");
 			return;
@@ -46,7 +44,7 @@ public class SellStocks {
 		}
 
 		// Find out how many stocks player has
-		int currentamount = SQLsell.getAmount(p, index);
+		int currentamount = Database.getAmount(p, index);
 		if (currentamount == -1) {
 			p.sendMessage(ChatColor.RED + "Sell error: 1");
 			Bukkit.getLogger().severe("SQL buy error: 1");
@@ -64,13 +62,13 @@ public class SellStocks {
 
 		// Check if player has no stocks left
 		if (newvalue == 0) {
-			if (SQLsell.removeStocks(index, p) == false) {
+			if (Database.removeStocks(index, p) == false) {
 				p.sendMessage(ChatColor.RED + "Sell error: 2");
 				Bukkit.getLogger().severe("SQL buy error: 2");
 				return;
 			}
 		} else {
-			if (SQLsell.updateAmount(index, p, newvalue) == false) {
+			if (Database.updateAmount(index, p, newvalue) == false) {
 				p.sendMessage(ChatColor.RED + "Sell error: 3");
 				Bukkit.getLogger().severe("SQL buy error: 3");
 				return;
@@ -78,13 +76,13 @@ public class SellStocks {
 		}
 
 		// Reduction in owned stocks
-		if (SQLsell.updateOwned(index, amount) == false) {
+		if (Database.updateOwned(index, amount) == false) {
 			p.sendMessage(ChatColor.RED + "Sell error: 4");
 			Bukkit.getLogger().severe("SQL buy error: 4");
 			return;
 		}
 		// Stock value
-		int value = SQLvaluechange.getValue(index);
+		int value = Database.getStockValue(index);
 
 		// Tax value
 		float tax = 100 - BuxInvest.getSellTax();

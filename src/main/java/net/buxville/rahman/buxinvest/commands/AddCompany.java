@@ -1,7 +1,6 @@
 package net.buxville.rahman.buxinvest.commands;
 
-import net.buxville.rahman.buxinvest.SQL.SQLaddrem;
-import net.buxville.rahman.buxinvest.SQL.SQLchecks;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -35,13 +34,13 @@ public class AddCompany {
 			return;
 		}
 
-		if (SQLchecks.stockContainsIndex(index)) {
+		if (Database.stockContainsIndex(index)) {
 			p.sendMessage(ChatColor.RED + "Company already exists.");
 			return;
 		}
 
 		// Add company
-		SQLaddrem.addCompany(index, companyname, p);
+		Database.addCompany(index, companyname, p);
 
 		p.sendMessage(ChatColor.GREEN + "Company \"" + companyname
 				+ "\" created with index \"" + index + "\".");

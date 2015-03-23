@@ -1,9 +1,7 @@
 package net.buxville.rahman.buxinvest.commands;
 
 import net.buxville.rahman.buxinvest.BuxInvest;
-import net.buxville.rahman.buxinvest.SQL.SQLbuy;
-import net.buxville.rahman.buxinvest.SQL.SQLchecks;
-import net.buxville.rahman.buxinvest.SQL.SQLvaluechange;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,21 +40,21 @@ public class BuyStocks {
 		double balance = BuxInvest.getEconomy().getBalance(p);
 
 		// Get stock value
-		int value = SQLvaluechange.getValue(index);
+		int value = Database.getStockValue(index);
 		if (value == -1) {
 			p.sendMessage(ChatColor.RED + "Money error.");
 			return;
 		}
 
 		// Check to see if company setup is complete then update amount
-		if (!SQLchecks.stockchangesContainsIndex(index)) {
+		if (!Database.stockchangesContainsIndex(index)) {
 			p.sendMessage(ChatColor.RED + "Invalid company with index \""
 					+ index + "\" .");
 			return;
 		}
 
 		// Get data
-		int[] stockdata = SQLbuy.getValues(index);
+		int[] stockdata = Database.getValues(index);
 
 		if (stockdata[0] == -1 || stockdata[1] == -1) {
 			p.sendMessage(ChatColor.RED + "Buy error: 1");
@@ -104,28 +102,23 @@ public class BuyStocks {
 					+ ", including tax.");
 		}
 
-		if (SQLchecks.playerstocksContains(index, p)) {
-			if (SQLbuy.updateStocks(index, p, amount) == false) {
-				p.sendMessage(ChatColor.RED + "Buy error: 4");
-				Bukkit.getLogger().severe("SQL buy error: 4");
+		if (Database.playerstocksContains(index, p)) {
+			if (Database.updateStocks(index, p, amount) == false) {
+				p.sendMessage(ChatColor.RED + "Buy error: 3");
+				Bukkit.getLogger().severe("SQL buy error: 3");
 				return;
 			}
-			SQLbuy.updateValue(index, newamount);
+			Database.updateValue(index, newamount);
 			return;
 		} else {
 			// Add stocks to database
-			if (SQLbuy.addStocks(index, p, amount) == false) {
+			if (Database.addStocks(index, p, amount) == false) {
 				p.sendMessage(ChatColor.RED + "Buy error: 2");
 				Bukkit.getLogger().severe("SQL buy error: 2");
 				return;
 			}
 			// Change to boolean
-			if (SQLbuy.updateValue(index, newamount) == false) {
-				p.sendMessage(ChatColor.RED + "Buy error: 3");
-				Bukkit.getLogger().severe("SQL buy error: 3");
-				return;
-			}
+			Database.updateValue(index, newamount);
 		}
 	}
-
 }

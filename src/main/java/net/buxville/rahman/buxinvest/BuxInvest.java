@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import net.buxville.rahman.buxinvest.SQL.SQLtables;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -50,7 +49,7 @@ public class BuxInvest extends JavaPlugin {
 		}
 
 		// Generate SQL Databases
-		SQLtables.createTables();
+		Database.createTables();
 
 		// Command Executor
 		this.getCommand("invest").setExecutor(

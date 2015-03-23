@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.buxville.rahman.buxinvest.SQL.SQLchange;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -31,11 +31,11 @@ public class StockChange {
 	}
 
 	private static void updateStocks(String[] args) {
-		List<String> indexs = SQLchange.stockList();
+		List<String> indexs = Database.stockList();
 
 		// Update values of stock loop
 		for (String index : indexs) {
-			int[] variations = SQLchange.getBoundaries(index);
+			int[] variations = Database.getBoundaries(index);
 			int upper = variations[0];
 			int lower = variations[1];
 
@@ -50,7 +50,7 @@ public class StockChange {
 			Float choice = (1 + variation.get(random));
 
 			// Get stock value
-			int value = SQLchange.getValue(index);
+			int value = Database.getValue(index);
 
 			// New stock value
 			int newvalue = Math.round(choice * value);
@@ -61,9 +61,9 @@ public class StockChange {
 
 			int change = Math.round((choice - 1) * 100);
 
-			SQLchange.updateValue(index, newvalue);
-			SQLchange.updateChange(index, change);
-			SQLchange.updateHistory(index, newvalue);
+			Database.updateValue(index, newvalue);
+			Database.updateChange(index, change);
+			Database.updateHistory(index, newvalue);
 		}
 
 		System.out.println("Stocks updated.");

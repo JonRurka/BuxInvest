@@ -1,6 +1,6 @@
 package net.buxville.rahman.buxinvest.commands;
 
-import net.buxville.rahman.buxinvest.SQL.SQLportfolio;
+import net.buxville.rahman.buxinvest.Database;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ public class Portfolio {
 		// Get list
 		p.sendMessage(ChatColor.GOLD + p.getName() + "'s Portfolio");
 		p.sendMessage("===================");
-		SQLportfolio.getStocks(p);
+		Database.getStocks(p);
 	}
 
 }
