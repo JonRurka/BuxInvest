@@ -1,0 +1,21 @@
+name: BuxInvest
+main: net.buxville.rahman.buxinvest.BuxInvest
+version: 1.0
+commands:
+   invest:
+    description: invest command
+   portfolio:
+    description: portfolio command
+permissions:
+   buxinvest.admin:
+    description: Gives access to admin commands
+   buxinvest.buy:
+    description: Gives access to stocks buy command
+   buxinvest.sell:
+    description: Gives access to stocks sell command
+   buxinvest.portfolio:
+    description: Gives access to stocks portfolio command
+   buxinvest.value:
+    description: Gives access to stocks check command
+   buxinvest.taxes:
+    description: Gives access to stocks tax command

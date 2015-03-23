@@ -1,0 +1,8 @@
+# SQL information
+username: root
+password: password
+url: jdbc:mysql://127.0.0.1:3306/buxville
+
+# Taxes (a percentage)
+buytax: 0
+selltax: 0
