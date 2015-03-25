@@ -208,6 +208,7 @@ public class Database {
 				rs.next();
 				owned = rs.getInt("owned");
 				amount = rs.getInt("amount");
+				rs.close();
 				ps.close();
 			} catch (SQLException e) {
 				System.out.println("Error with value - BuxInvest");
