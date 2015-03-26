@@ -44,7 +44,7 @@ public class SellStocks {
 		}
 
 		// Find out how many stocks player has
-		int currentamount = Database.getAmount(p, index);
+		int currentamount = Database.getPlayerAmount(p, index);
 		if (currentamount == -1) {
 			p.sendMessage(ChatColor.RED + "Sell error: 1");
 			Bukkit.getLogger().severe("SQL buy error: 1");

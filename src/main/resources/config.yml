@@ -6,3 +6,6 @@ url: jdbc:mysql://127.0.0.1:3306/buxville
 # Taxes (a percentage)
 buytax: 0
 selltax: 0
+
+# Sign update interval in seconds.
+updateinterval: 1

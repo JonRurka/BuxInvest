@@ -6,20 +6,31 @@ import java.sql.SQLException;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.buxville.rahman.buxinvest.commands.CreateSign;
+import net.buxville.rahman.buxinvest.listeners.SingPlaceListener;
+
 public class BuxInvest extends JavaPlugin {
+	private static BuxInvest instance;
+	
 	String username;
 	String password;
 	String url;
+	int updateInverval;
 	static Integer selltax = 0;
 	static Integer buytax = 0;
 	static Connection con;
 	static Economy econ;
+	static SignController signMnger;
+	
+	SingPlaceListener signListener;
 
 	public void onEnable() {
 		// Load Config
+		instance = this;
 		saveDefaultConfig();
 		getLogger().info("Config Loaded.");
 
@@ -56,6 +67,9 @@ public class BuxInvest extends JavaPlugin {
 				new BuxInvestCommandExecutor(this));
 		this.getCommand("portfolio").setExecutor(
 				new BuxInvestCommandExecutor(this));
+		
+		signMnger = new SignController(this, updateInverval);
+		signListener = new SingPlaceListener(this);
 
 	}
 
@@ -73,11 +87,15 @@ public class BuxInvest extends JavaPlugin {
 	private void reloadConfigValues() {
 		buytax = this.getConfig().getInt("buytax");
 		selltax = this.getConfig().getInt("selltax");
+		updateInverval = this.getConfig().getInt("updateinterval");
 	}
 
 	public void onDisable() {
 		// Clean up MySQL connection
 		try {
+			HandlerList.unregisterAll(this);
+			CreateSign.Clear();
+			instance = null;
 			if (con != null && !con.isClosed()) {
 				con.close();
 			}
@@ -101,5 +119,14 @@ public class BuxInvest extends JavaPlugin {
 	public static Integer getSellTax() {
 		return selltax;
 	}
+	
+	public static SignController GetSignController()
+	{
+		return signMnger;
+	}
 
+	public static BuxInvest GetInstance()
+	{
+		return instance;
+	}
 }

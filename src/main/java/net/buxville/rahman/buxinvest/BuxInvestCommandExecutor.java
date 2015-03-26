@@ -1,7 +1,10 @@
 package net.buxville.rahman.buxinvest;
 
+import java.awt.List;
+
 import net.buxville.rahman.buxinvest.commands.AddCompany;
 import net.buxville.rahman.buxinvest.commands.BuyStocks;
+import net.buxville.rahman.buxinvest.commands.CreateSign;
 import net.buxville.rahman.buxinvest.commands.Portfolio;
 import net.buxville.rahman.buxinvest.commands.RemoveCompany;
 import net.buxville.rahman.buxinvest.commands.SellStocks;
@@ -10,6 +13,7 @@ import net.buxville.rahman.buxinvest.commands.SetValue;
 import net.buxville.rahman.buxinvest.commands.StockChange;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -114,10 +118,30 @@ public class BuxInvestCommandExecutor implements CommandExecutor {
 				SetValue.updateValue(p, args);
 				return false;
 			}
+			
+			// Place stock display signs.
+			if (args[0].equalsIgnoreCase("createsign"))
+			{
+				CreateSign.PlaceSignCommand(p);
+				return false;
+			}
 
 			// Set company value
 			if (args[0].equalsIgnoreCase("value")) {
-				SetValue.getValue(p, args);
+				if (args.length == 2)
+					SetValue.getValue(p, args);
+				else
+				{
+					p.sendMessage(ChatColor.GOLD + "---- " + ChatColor.WHITE + "Stocks" + ChatColor.GOLD + "---- ");
+					java.util.List<String> companies = Database.stockList();
+					for (int i = 0; i < companies.size(); i++)
+					{
+						p.sendMessage(ChatColor.GREEN + " - [" + companies.get(i) + "]: " + 
+									  Database.GetStockName(companies.get(i)) + 
+									  " - Shares: " + Database.GetTotalAmount(companies.get(i)) +
+									  ", Value: " + Database.getValue(companies.get(i)));
+					}
+				}
 				return false;
 			}
 
