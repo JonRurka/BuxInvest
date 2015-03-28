@@ -30,7 +30,7 @@ public class StockChange {
 		return;
 	}
 
-	private static void updateStocks(String[] args) {
+	public static void updateStocks(String[] args) {
 		List<String> indexs = Database.stockList();
 
 		// Update values of stock loop
@@ -66,7 +66,7 @@ public class StockChange {
 			Database.updateHistory(index, newvalue);
 		}
 
-		System.out.println("Stocks updated.");
+		//System.out.println("Stocks updated.");
 		return;
 
 	}

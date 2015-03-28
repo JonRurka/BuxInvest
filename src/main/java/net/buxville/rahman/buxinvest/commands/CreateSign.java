@@ -40,6 +40,7 @@ public class CreateSign {
 	
 	public static void Clear()
 	{
-		ReadyToPlace.clear();
+		if (ReadyToPlace != null)
+			ReadyToPlace.clear();
 	}
 }

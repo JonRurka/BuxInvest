@@ -5,9 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class Database {
@@ -100,7 +104,7 @@ public class Database {
 					"CREATE TABLE IF NOT EXISTS `signs` ("
 							+ "`signid` int(6) NOT NULL AUTO_INCREMENT,"
 							+ "`index` varchar(6) NOT NULL,"
-							+ "`world` varchar(20) NOT NULL,"
+							+ "`worldid` varchar(20) NOT NULL,"
 							+ "`x` int(10) NOT NULL,"
 							+ "`y` int(10) NOT NULL,"
 							+ "`z` int(10) NOT NULL,"
@@ -120,7 +124,7 @@ public class Database {
 	{
 		try {
 			PreparedStatement ps = BuxInvest.getConnection().prepareStatement(
-					"INSERT INTO signs (`index`, `world`, `x`, `y`, `z`) VALUES (?,?,?,?,?);");
+					"INSERT INTO signs (`index`, `worldid`, `x`, `y`, `z`) VALUES (?,?,?,?,?);");
 			ps.setString(1, index);
 			ps.setString(2, pos.getWorld().getName());
 			ps.setInt(3, pos.getBlockX());
@@ -139,7 +143,7 @@ public class Database {
 	{
 		try {
 			PreparedStatement ps = BuxInvest.getConnection().prepareStatement(
-					"DELETE FROM `signs` WHERE `world`=? AND `x`=? AND `y`=? AND `z=`?;");
+					"DELETE FROM `signs` WHERE `worldid`=? AND `x`=? AND `y`=? AND `z`=?;");
 			ps.setString(1, pos.getWorld().getName());
 			ps.setInt(2, pos.getBlockX());
 			ps.setInt(3, pos.getBlockY());
@@ -153,21 +157,29 @@ public class Database {
 	}
 	
 	// Get all sign positions from a specific stock index.
-	public static List<Location> GetSignLocation(String index)
+	public static List<Location> GetSignLocation(String index) throws Exception
 	{
 		List<Location> signLocations = new ArrayList<Location>();
 		try {
 			PreparedStatement pslist = BuxInvest.getConnection()
-					.prepareStatement("SELECT `world`,`x`,`y`,`z` FROM `signs` WHERE `index`=?;");
+					.prepareStatement("SELECT `worldid`,`x`,`y`,`z` FROM `signs` WHERE `index`=?;");
 			pslist.setString(1, index);
 			ResultSet rslist = pslist.executeQuery();
 
 			while (rslist.next()) {
-				String world = rslist.getString("world");
+				String world = rslist.getString("worldid");
 				int x = rslist.getInt("x");
 				int y = rslist.getInt("y");
 				int z = rslist.getInt("z");
-				signLocations.add(new Location(BuxInvest.GetInstance().getServer().getWorld(world), x, y, z));
+				//UUID uid = UUID.fromString(world);
+				/*Server server = BuxInvest.GetInstance().getServer();
+				if (server == null)
+					throw new Exception("server instance is null.");*/
+				BuxInvest.GetInstance().getLogger().info(Bukkit.getWorlds().toString());
+				World worldInst = Bukkit.getWorld(world.trim());
+				if (worldInst == null)
+					throw new Exception("World instance is null.");
+				signLocations.add(new Location(worldInst, x, y, z));
 			}
 
 		} catch (SQLException e) {

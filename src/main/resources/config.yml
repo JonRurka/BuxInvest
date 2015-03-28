@@ -7,5 +7,6 @@ url: jdbc:mysql://127.0.0.1:3306/buxville
 buytax: 0
 selltax: 0
 
-# Sign update interval in seconds.
-updateinterval: 1
+# Update intervals in seconds.
+signinterval: 5
+stockinterval: 1

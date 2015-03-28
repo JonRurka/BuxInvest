@@ -9,6 +9,7 @@ import org.bukkit.material.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
+import org.bukkit.event.block.*;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.*;
 
@@ -32,5 +33,15 @@ public class SingPlaceListener implements Listener {
 			BuxInvest.GetSignController().CreateSign(p, event.getBlock().getLocation(), event);
 		}
 		
+	}
+	
+	@EventHandler
+	public void OnSignBroke(BlockBreakEvent event)
+	{
+		Player p = event.getPlayer();
+		if (p.hasPermission("buxinvest.admin") && event.getBlock().getType() == Material.WALL_SIGN)
+		{
+			BuxInvest.GetSignController().DeleteSign(p, event.getBlock().getLocation());
+		}
 	}
 }

@@ -6,11 +6,13 @@ import java.sql.SQLException;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.buxville.rahman.buxinvest.commands.CreateSign;
+import net.buxville.rahman.buxinvest.commands.StockChange;
 import net.buxville.rahman.buxinvest.listeners.SingPlaceListener;
 
 public class BuxInvest extends JavaPlugin {
@@ -19,7 +21,8 @@ public class BuxInvest extends JavaPlugin {
 	String username;
 	String password;
 	String url;
-	int updateInverval;
+	int signUpdateInterval;
+	int stocksUpdateInterval;
 	static Integer selltax = 0;
 	static Integer buytax = 0;
 	static Connection con;
@@ -27,6 +30,8 @@ public class BuxInvest extends JavaPlugin {
 	static SignController signMnger;
 	
 	SingPlaceListener signListener;
+	
+	int scheduleID;
 
 	public void onEnable() {
 		// Load Config
@@ -68,9 +73,28 @@ public class BuxInvest extends JavaPlugin {
 		this.getCommand("portfolio").setExecutor(
 				new BuxInvestCommandExecutor(this));
 		
-		signMnger = new SignController(this, updateInverval);
+		signMnger = new SignController(this, signUpdateInterval);
 		signListener = new SingPlaceListener(this);
-
+		
+		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
+			@Override
+			public void run() {
+				getLogger().info("Loading stock signs.");
+				signMnger.Load();
+			}
+			
+		}, (long)20);
+		
+		scheduleID = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+			@Override
+			public void run() {
+				Update();
+			}}, 40, stocksUpdateInterval * 20);
+	}
+	
+	private void Update()
+	{
+		StockChange.updateStocks(null);
 	}
 
 	private boolean setupEconomy() {
@@ -87,7 +111,8 @@ public class BuxInvest extends JavaPlugin {
 	private void reloadConfigValues() {
 		buytax = this.getConfig().getInt("buytax");
 		selltax = this.getConfig().getInt("selltax");
-		updateInverval = this.getConfig().getInt("updateinterval");
+		signUpdateInterval = this.getConfig().getInt("signinterval");
+		stocksUpdateInterval = this.getConfig().getInt("stockinterval");
 	}
 
 	public void onDisable() {
@@ -95,7 +120,11 @@ public class BuxInvest extends JavaPlugin {
 		try {
 			HandlerList.unregisterAll(this);
 			CreateSign.Clear();
+			getServer().getScheduler().cancelTask(scheduleID);
+			if (signMnger != null)
+				signMnger.Close();
 			instance = null;
+			signListener = null;
 			if (con != null && !con.isClosed()) {
 				con.close();
 			}

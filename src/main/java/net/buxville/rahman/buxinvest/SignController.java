@@ -28,6 +28,7 @@ public class SignController {
 	List<SignData> signs;
 	BuxInvest plugin;
 	long delay, period;
+	int scheduleID;
 	
 	public SignController(BuxInvest instance, long seconds)
 	{
@@ -35,7 +36,7 @@ public class SignController {
 		period = seconds * 20;
 		plugin = instance;
 		signs = new ArrayList<SignData>();
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+		scheduleID = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			@Override
 			public void run()
 			{
@@ -47,11 +48,42 @@ public class SignController {
 	public void Update(){
 		for (int i = 0; i < signs.size(); i++)
 		{
-			Sign sign = (Sign) signs.get(i).position.getBlock().getState();
-			String stockIndex = signs.get(i).stock;
-			sign.setLine(2, "Value: " + Database.getValue(stockIndex));
-			sign.update();
+			try {
+				Location pos = signs.get(i).position;
+				World world = pos.getWorld();
+				Block signBlock = world.getBlockAt(pos);
+				BlockState state = signBlock.getState();
+				if (state instanceof Sign){
+					Sign sign = (Sign) state;
+					String stockIndex = signs.get(i).stock;
+					sign.setLine(2, "Value: " + Database.getValue(stockIndex));
+					sign.update();
+				}
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
+	}
+	
+	public void Load(){
+		List<String> stocks = Database.stockList();
+		for (int i = 0; i < stocks.size(); i++)
+		{
+			try {
+				List<Location> signLocations;
+				signLocations = Database.GetSignLocation(stocks.get(i));
+				for (int j = 0; j < signLocations.size(); j++)
+				{
+					signs.add(new SignData(signLocations.get(j), stocks.get(i)));
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	public void CreateSign(Player p, Location position, SignChangeEvent event)
@@ -77,5 +109,25 @@ public class SignController {
 			else
 				p.sendMessage(ChatColor.RED + "Invalid block type. You probably tried to use a picket sign.");
 		}
+	}
+	
+	public void DeleteSign(Player p, Location position)
+	{
+		for (int i = 0; i < signs.size(); i++)
+		{
+			if (position.distance(signs.get(i).position) == 0)
+			{
+				signs.remove(i);
+				Database.RemoveSign(position);
+				p.sendMessage("Sign removed.");
+				break;
+			}
+		}
+	}
+	
+	public void Close()
+	{
+		signs.clear();
+		plugin.getServer().getScheduler().cancelTask(scheduleID);
 	}
 }
