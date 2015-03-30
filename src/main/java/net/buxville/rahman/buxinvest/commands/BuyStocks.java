@@ -79,7 +79,7 @@ public class BuyStocks {
 		}
 
 		// Tax value
-		float tax = 100 + BuxInvest.getSellTax();
+		float tax = 100 + BuxInvest.getBuyTax();
 		float multiplier = tax / 100;
 		double finalvalue = Math.round(multiplier * amount * value);
 
